@@ -1,0 +1,29 @@
+:host{
+  height: 100vh;
+  width: 100vw;
+  padding: 4rem 4rem;
+  display: flex;
+  justify-content: center;
+}
+.auth-form {
+  width: 300px;
+  height: max-content;
+  font-size: 14px;
+}
+.auth-form form{
+  margin-bottom: 12px;
+}
+.auth-form .form-control {
+  border-radius: 12px;
+}
+.auth-form h2 {
+  margin: 0 0 15px;
+}
+.form-control, .btn {
+  min-height: 38px;
+  border-radius: 12px;
+}
+.btn {
+  font-size: 15px;
+  font-weight: bold;
+}

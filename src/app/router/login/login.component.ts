@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AuthService} from "../../service/auth.service";
 
 @Component({
   selector: 'app-login',
@@ -10,19 +11,25 @@ export class LoginComponent implements OnInit{
   loginForm:FormGroup
   regexName:string = "^[A-Za-z\\s]{2,25}$";
   regexPass:string = "^(?=.*[A-Z!@#$%^&*])[A-Za-z\\d!@#$%^&*]{6,25}$";
-  constructor(private fb: FormBuilder) {
+
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService
+  ) {
     this.loginForm =  this.fb.group({
       name: ['', [Validators.required, Validators.pattern(this.regexName)]],
       password: ['', [Validators.required, Validators.pattern(this.regexPass)]]
     })
   }
 
-  ngOnInit() {
-
-  }
-
+  ngOnInit() {}
 
   onSubmit(form:FormGroup){
     console.log(form.invalid);
+  }
+
+  googleAuth() {
+    this.authService.googleAuth();
   }
 }

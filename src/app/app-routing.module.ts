@@ -7,17 +7,14 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren:()=> import('./router/login/login.module').then(m=>m.LoginModule),
-    canActivate:[PageGuard]
   },
   {
     path: 'register',
     loadChildren:()=> import('./router/signup/signup.module').then(m=>m.SignupModule),
-    canActivate:[PageGuard]
   },
   {
     path: 'dashboard',
     loadChildren:()=> import('./router/dashboard/dashboard.module').then(m=>m.DashboardModule),
-    canActivate:[AuthGuard]
   },
   { path: '**', redirectTo: 'login', pathMatch: 'full' },
   { path: '', redirectTo: 'login', pathMatch: 'full' }

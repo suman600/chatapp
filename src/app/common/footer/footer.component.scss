@@ -1,0 +1,42 @@
+:host{
+  border: 1px solid #cbd0dd;
+  padding: 1rem 1rem;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  background: #fff;
+  overflow: hidden;
+  height: max-content;
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    padding: 10px 1rem;
+  }
+}
+form{
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+   gap: 2rem;
+  }
+}
+.form-control{
+  outline: 0;
+  padding: 1rem 1rem;
+  font-size: 1rem;
+  border-radius: 2rem;
+  border-color: #cbd0dd;
+  color: #31374a;
+}
+button[type="submit"]{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-weight: 600;
+  border-radius: 1rem;
+  padding: 8px 1rem;
+  outline: 0;
+  min-width: 140px;
+  background: rgb(56, 116, 255);
+  color: #fff;
+  border: 1px solid rgb(56, 116, 255);
+}

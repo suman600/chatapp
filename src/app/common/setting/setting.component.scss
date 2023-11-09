@@ -1,0 +1,43 @@
+.setting{
+  position: relative;
+  &__toggle{
+    border-radius: 100%;
+    outline: 0;
+    border: 0;
+    background: transparent;
+    padding: 0 0;
+    overflow: hidden;
+    img{
+      width: 32px;
+      height: 32px;
+    }
+  }
+  &__box{
+    position: absolute;
+    top: 36px;
+    right: 0;
+    width: 200px;
+    background: #fff;
+    z-index: 9999;
+    border-radius: 4px;
+    border: 1px solid #e3e6ed;
+    animation: show .2s ease-in-out forwards;
+  }
+  &__item{
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    &:hover{
+      background: #e3e6ed;
+    }
+  }
+}
+
+@keyframes show {
+  from{
+    top: 46px;
+  }
+  to{
+    top: 36px;
+  }
+}

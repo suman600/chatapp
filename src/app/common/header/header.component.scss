@@ -1,0 +1,15 @@
+:host{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #cbd0dd;
+  padding: 1rem 1rem;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  background: #fff;
+  height: max-content;
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    padding: 10px 1rem;
+  }
+}
+

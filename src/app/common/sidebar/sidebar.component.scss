@@ -1,0 +1,23 @@
+:host{
+  width: 20vw;
+  min-width: 260px;
+  max-width: 360px;
+  border-radius: 1rem;
+  overflow: auto;
+}
+.form-control{
+  outline: 0;
+  padding: 8px 14px;
+  font-size: 12px;
+  border-radius: 1rem;
+  height: 34px;
+  border-color: #cbd0dd;
+  margin-bottom: 2rem;
+  color: #31374a;
+  &::placeholder{
+    font-size: 12px;
+  }
+}
+app-profile{
+  margin-bottom: 1rem;
+}

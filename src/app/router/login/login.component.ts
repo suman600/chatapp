@@ -10,6 +10,7 @@ import {AuthService} from "../../service/auth.service";
 export class LoginComponent implements OnInit{
   loginForm:FormGroup
   regexName:string = "^[A-Za-z\\s]{2,25}$";
+  regexEmail:string = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
   regexPass:string = "^(?=.*[A-Z!@#$%^&*])[A-Za-z\\d!@#$%^&*]{6,25}$";
 
 
@@ -18,7 +19,7 @@ export class LoginComponent implements OnInit{
     private authService: AuthService
   ) {
     this.loginForm =  this.fb.group({
-      name: ['', [Validators.required, Validators.pattern(this.regexName)]],
+      email: ['', [Validators.required, Validators.pattern(this.regexEmail)]],
       password: ['', [Validators.required, Validators.pattern(this.regexPass)]]
     })
   }
@@ -26,10 +27,14 @@ export class LoginComponent implements OnInit{
   ngOnInit() {}
 
   onSubmit(form:FormGroup){
-    console.log(form.invalid);
+    console.log(form)
+    let email:string = form.value.email;
+    let password:string = form.value.password;
+    this.authService.login(email, password);
   }
 
   googleAuth() {
     this.authService.googleAuth();
   }
+
 }

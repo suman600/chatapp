@@ -7,6 +7,7 @@ import {environment} from "../environments/environment";
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import {AuthService} from "./service/auth.service";
+import {HttpClientModule} from "@angular/common/http";
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import {AuthService} from "./service/auth.service";
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth())
   ],

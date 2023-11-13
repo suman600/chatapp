@@ -9,13 +9,13 @@ import {
   signOut
 } from '@angular/fire/auth';
 import {Router} from '@angular/router';
+import {User} from "../modal/user";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   userData:any;
-
   constructor(
     private auth:Auth,
     private router:Router,
@@ -33,9 +33,6 @@ export class AuthService {
     })
   }
 
-  getAuthFromFire(){
-    return this.auth.currentUser;
-  }
   getAuthFromLocal(){
     const token = localStorage.getItem('user')
     return JSON.parse(token as string);
@@ -54,6 +51,7 @@ export class AuthService {
         this.ngZone.run(() => {
           this.router.navigate(['/dashboard']);
         });
+        this.addUserData(this.userData);
       })
       .catch((error) => {
         window.alert(error.message);
@@ -67,6 +65,7 @@ export class AuthService {
         this.ngZone.run(() => {
           this.router.navigate(['/dashboard']);
         });
+        this.addUserData(this.userData);
       })
       .catch((error) => {
         window.alert(error.message);
@@ -81,9 +80,22 @@ export class AuthService {
     return this.loginWithPopup(new GoogleAuthProvider());
   }
 
-   loginWithPopup(provider :any) {
-    return signInWithPopup(this.auth, provider).then(() => {
+  loginWithPopup(provider :any) {
+    return signInWithPopup(this.auth, provider).then((res:any) => {
       this.router.navigate(['/dashboard']);
+      this.addUserData(res.user)
     });
+  }
+
+  addUserData(user:any){
+    const userData:User = {
+      useId: user.uid,
+      userEmail: user.email,
+      userName: user.displayName,
+      userPhoto: user.photoURL,
+      userEmailVerified: user.emailVerified,
+      userIsAnonymous: user.isAnonymous
+    }
+    return userData;
   }
 }

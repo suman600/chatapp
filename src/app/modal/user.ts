@@ -1,6 +1,8 @@
 export interface User  {
-  id:string;
-  name: string;
-  profile: string;
-  email:string;
+  useId:string;
+  userName: string;
+  userPhoto: string;
+  userEmail:string;
+  userEmailVerified:boolean;
+  userIsAnonymous:boolean;
 }

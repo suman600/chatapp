@@ -1,6 +1,6 @@
 <div class="current-user">
   <picture class="current-user__pic">
-    <img src="https://prium.github.io/phoenix/v1.13.0/assets/img/team/15.webp" alt="">
+    <img [src]="user?.photo" [alt]="user?.name">
   </picture>
-  <h4 class="current-user__title">Sharuka Nijibum</h4>
+  <h4 class="current-user__title">{{user?.name}}</h4>
 </div>

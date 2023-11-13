@@ -1,0 +1,25 @@
+:host{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+picture{
+  width: 140px;
+  height: 140px;
+  border: 4px solid #e4e6ed;
+  border-radius: 100%;
+  display: block;
+  overflow: hidden;
+  img{
+    width: 100%;
+    height: 100%;
+  }
+}
+
+span{
+  font-weight: normal;
+  color: #21252b;
+}

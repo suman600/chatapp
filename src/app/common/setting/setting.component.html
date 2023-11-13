@@ -3,7 +3,7 @@
     <img src="https://prium.github.io/phoenix/v1.13.0/assets/img/team/15.webp" alt="">
   </button>
   <div class="setting__box" *ngIf="showDropdown">
-    <div class="setting__item">Profile</div>
+    <div class="setting__item" [routerLink]="['/profile']">Profile</div>
     <div class="setting__item" (click)="logout()">Logout</div>
   </div>
 </div>

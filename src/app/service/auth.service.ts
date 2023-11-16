@@ -88,13 +88,13 @@ export class AuthService {
   }
 
   addUserData(user:any){
-    const userData:User = {
+    const userData: User = {
       useId: user.uid,
       userEmail: user.email,
-      userName: user.displayName,
-      userPhoto: user.photoURL,
-      userEmailVerified: user.emailVerified,
-      userIsAnonymous: user.isAnonymous
+      userName: user.displayName || '',
+      userPhoto: user.photoURL || '',
+      userEmailVerified: user.emailVerified || false,
+      userIsAnonymous: user.isAnonymous || false
     }
     return userData;
   }

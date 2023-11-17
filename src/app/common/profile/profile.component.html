@@ -1,6 +1,10 @@
 <picture>
-  <img src="https://prium.github.io/phoenix/v1.13.0/assets/img/team/20.webp" alt="Flowers" style="width:auto;">
-  <img src="https://prium.github.io/phoenix/v1.13.0/assets/img/team/20.webp" *ngIf="false" alt="Flowers" style="width:auto;">
+  <ng-container *ngIf="user.userPhotoUrl !== ''">
+    <img [src]="user?.userPhotoUrl" [alt]="user.userName" style="width:auto;">
+  </ng-container>
+  <ng-container *ngIf="user.userPhotoUrl == ''">
+    <img [src]="'./assets/image/avtar.jpeg'" [alt]="user.userName" style="width:auto;">
+  </ng-container>
 </picture>
-<h5>Sharuka Nijibum</h5>
+<h5>{{user?.userName ? user?.userName : user?.userEmail}}</h5>
 <p>This is a message from you</p>

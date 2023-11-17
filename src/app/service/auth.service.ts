@@ -10,15 +10,14 @@ import {
 } from '@angular/fire/auth';
 import {Router} from '@angular/router';
 import {User} from "../modal/user";
-import {HttpClient} from "@angular/common/http";
-import { Firestore, addDoc, collection, getDocs, query } from '@angular/fire/firestore';
+import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/compat/firestore";
+import {map} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   userData:User = {
-    userId:'',
     userName:'',
     userEmail:'',
     userPhoneNumber:'',
@@ -28,17 +27,18 @@ export class AuthService {
     userIsAnonymous:false
   }
 
+  private dataCollection: AngularFirestoreCollection<any>;
+
 
   constructor(
     private auth:Auth,
     private router:Router,
     public ngZone: NgZone,
-    private http: HttpClient,
-    public firestore: Firestore
+    public firestore: AngularFirestore,
   ) {
     onAuthStateChanged(this.auth,(user:any)=>{
+      let setStorage = {};
       if(user){
-        this.userData.userId = user.uid || '';
         this.userData.userName =  user.displayName ||'';
         this.userData.userEmail = user.email || '';
         this.userData.userPhoneNumber = user.phoneNumber || '';
@@ -46,14 +46,17 @@ export class AuthService {
         this.userData.userEmailVerified = user.emailVerified || false;
         this.userData.userPhoneVerified = user.userPhoneVerified || false;
         this.userData.userIsAnonymous = user.isAnonymous || false;
-
-        localStorage.setItem('user', JSON.stringify(this.userData));
+        setStorage = {userId: user.uid, ...this.userData}
+        localStorage.setItem('user', JSON.stringify(setStorage));
         JSON.parse(localStorage.getItem('user')!);
       } else {
         localStorage.setItem('user', 'null');
         JSON.parse(localStorage.getItem('user')!);
       }
     })
+
+
+    this.dataCollection = this.firestore.collection('chat-users');
   }
 
   getAuthFromLocal(){
@@ -70,18 +73,12 @@ export class AuthService {
   register(email : string, password : string) {
     return createUserWithEmailAndPassword(this.auth, email, password)
       .then((result) => {
-        this.userData.userId = result.user.uid || '';
-        this.userData.userName =  result.user.displayName ||'';
-        this.userData.userEmail = result.user.email || '';
-        this.userData.userPhoneNumber = result.user.phoneNumber || '';
-        this.userData.userPhotoUrl = result.user.photoURL || '';
-        this.userData.userEmailVerified = result.user.emailVerified || false;
-        this.userData.userPhoneVerified = false;
-        this.userData.userIsAnonymous = result.user.isAnonymous || false;
-        this.addChatUser(this.userData);
-        this.ngZone.run(() => {
-          this.router.navigate(['/dashboard']);
-        });
+        if(result){
+          this.addChatUser(result.user.uid, this.userData);
+          this.ngZone.run(() => {
+            this.router.navigate(['/dashboard']);
+          });
+        }
       })
       .catch((error) => {
         window.alert(error.message);
@@ -91,10 +88,11 @@ export class AuthService {
   login(email : string, password : string){
     return signInWithEmailAndPassword(this.auth, email, password)
       .then((result: any) => {
-        this.userData = result.user;
-        this.ngZone.run(() => {
-          this.router.navigate(['/dashboard']);
-        });
+        if (result){
+          this.ngZone.run(() => {
+            this.router.navigate(['/dashboard']);
+          });
+        }
       })
       .catch((error) => {
         window.alert(error.message);
@@ -112,35 +110,27 @@ export class AuthService {
   loginWithPopup(provider :any) {
     return signInWithPopup(this.auth, provider).then((result:any) => {
       if (result){
-        this.addChatUser(result.user);
+        this.addChatUser(result.user.userId, this.userData);
         this.router.navigate(['/dashboard']);
       }
       return false
     });
   }
 
-  async getChatUsers() {
-    return(
-      await getDocs(query(collection(this.firestore, 'chat-user')))
-    ).docs.map((user) => user.data())
+  getChatUsers(){
+    return this.dataCollection.snapshotChanges().pipe(
+      map((actions) => {
+        return actions.map((a) => {
+          const data = a.payload.doc.data();
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        });
+      })
+    );
   }
-  // getChatUsers(collection: string): Observable<any[]> {
-  //   return this.firestore.collection(collection).valueChanges();
-  // }
 
-  async addChatUser(param:User) {
-    const docRef =
-      await addDoc(collection(this.firestore, 'chat-user'), {
-        // userId: param.userId,
-        // userName: param.userName,
-        // userEmail: param.userEmail,
-        // userPhoneNumber: param.userPhoneNumber,
-        // userPhotoUrl: param.userPhotoUrl,
-        // userEmailVerified:param.userEmailVerified,
-        // userPhoneVerified:param.userPhoneVerified,
-        // userIsAnonymous:param.userIsAnonymous
-    });
-    console.log("Document written with ID: ", docRef.id);
+  addChatUser(customId: string, data: any): Promise<void> {
+    return this.dataCollection.doc(customId).set(data);
   }
 
 }

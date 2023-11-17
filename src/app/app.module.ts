@@ -8,6 +8,7 @@ import { provideAuth,getAuth } from '@angular/fire/auth';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { AuthService } from "./service/auth.service";
 import { HttpClientModule } from "@angular/common/http";
+import {getFirestore, provideFirestore} from "@angular/fire/firestore";
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { HttpClientModule } from "@angular/common/http";
     AppRoutingModule,
     HttpClientModule,
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
-    provideAuth(() => getAuth())
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

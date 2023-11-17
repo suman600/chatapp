@@ -10,23 +10,46 @@ import {
 } from '@angular/fire/auth';
 import {Router} from '@angular/router';
 import {User} from "../modal/user";
+import {HttpClient} from "@angular/common/http";
+import { Firestore, addDoc, collection, getDocs, query } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  userData:any;
+  userData:User = {
+    userId:'',
+    userName:'',
+    userEmail:'',
+    userPhoneNumber:'',
+    userPhotoUrl:'',
+    userEmailVerified:false,
+    userPhoneVerified:false,
+    userIsAnonymous:false
+  }
+
+
   constructor(
     private auth:Auth,
     private router:Router,
-    public ngZone: NgZone
+    public ngZone: NgZone,
+    private http: HttpClient,
+    public firestore: Firestore
   ) {
     onAuthStateChanged(this.auth,(user:any)=>{
       if(user){
-        this.userData = user;
+        this.userData.userId = user.uid || '';
+        this.userData.userName =  user.displayName ||'';
+        this.userData.userEmail = user.email || '';
+        this.userData.userPhoneNumber = user.phoneNumber || '';
+        this.userData.userPhotoUrl = user.photoURL || '';
+        this.userData.userEmailVerified = user.emailVerified || false;
+        this.userData.userPhoneVerified = user.userPhoneVerified || false;
+        this.userData.userIsAnonymous = user.isAnonymous || false;
+
         localStorage.setItem('user', JSON.stringify(this.userData));
         JSON.parse(localStorage.getItem('user')!);
-      }else {
+      } else {
         localStorage.setItem('user', 'null');
         JSON.parse(localStorage.getItem('user')!);
       }
@@ -47,11 +70,18 @@ export class AuthService {
   register(email : string, password : string) {
     return createUserWithEmailAndPassword(this.auth, email, password)
       .then((result) => {
-        this.userData = result.user;
+        this.userData.userId = result.user.uid || '';
+        this.userData.userName =  result.user.displayName ||'';
+        this.userData.userEmail = result.user.email || '';
+        this.userData.userPhoneNumber = result.user.phoneNumber || '';
+        this.userData.userPhotoUrl = result.user.photoURL || '';
+        this.userData.userEmailVerified = result.user.emailVerified || false;
+        this.userData.userPhoneVerified = false;
+        this.userData.userIsAnonymous = result.user.isAnonymous || false;
+        this.addChatUser(this.userData);
         this.ngZone.run(() => {
           this.router.navigate(['/dashboard']);
         });
-        this.addUserData(this.userData);
       })
       .catch((error) => {
         window.alert(error.message);
@@ -65,7 +95,6 @@ export class AuthService {
         this.ngZone.run(() => {
           this.router.navigate(['/dashboard']);
         });
-        this.addUserData(this.userData);
       })
       .catch((error) => {
         window.alert(error.message);
@@ -81,21 +110,37 @@ export class AuthService {
   }
 
   loginWithPopup(provider :any) {
-    return signInWithPopup(this.auth, provider).then((res:any) => {
-      this.router.navigate(['/dashboard']);
-      this.addUserData(res.user)
+    return signInWithPopup(this.auth, provider).then((result:any) => {
+      if (result){
+        this.addChatUser(result.user);
+        this.router.navigate(['/dashboard']);
+      }
+      return false
     });
   }
 
-  addUserData(user:any){
-    const userData: User = {
-      useId: user.uid,
-      userEmail: user.email,
-      userName: user.displayName || '',
-      userPhoto: user.photoURL || '',
-      userEmailVerified: user.emailVerified || false,
-      userIsAnonymous: user.isAnonymous || false
-    }
-    return userData;
+  async getChatUsers() {
+    return(
+      await getDocs(query(collection(this.firestore, 'chat-user')))
+    ).docs.map((user) => user.data())
   }
+  // getChatUsers(collection: string): Observable<any[]> {
+  //   return this.firestore.collection(collection).valueChanges();
+  // }
+
+  async addChatUser(param:User) {
+    const docRef =
+      await addDoc(collection(this.firestore, 'chat-user'), {
+        // userId: param.userId,
+        // userName: param.userName,
+        // userEmail: param.userEmail,
+        // userPhoneNumber: param.userPhoneNumber,
+        // userPhotoUrl: param.userPhotoUrl,
+        // userEmailVerified:param.userEmailVerified,
+        // userPhoneVerified:param.userPhoneVerified,
+        // userIsAnonymous:param.userIsAnonymous
+    });
+    console.log("Document written with ID: ", docRef.id);
+  }
+
 }

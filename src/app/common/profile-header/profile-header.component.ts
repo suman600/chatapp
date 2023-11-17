@@ -7,8 +7,10 @@ import {AuthService} from "../../service/auth.service";
   styleUrls: ['./profile-header.component.scss']
 })
 export class ProfileHeaderComponent {
+  currentUser:any;
 
   constructor(private service:AuthService) {
+    this.currentUser =  this.service.getAuthFromLocal();
   }
 
   logout(){

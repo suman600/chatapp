@@ -1,8 +1,13 @@
 <picture>
-  <img src="https://prium.github.io/phoenix/v1.13.0/assets/img/team/15.webp" alt="">
+  <ng-container *ngIf="currentUser.userPhotoUrl !==''">
+    <img [src]="currentUser.userPhotoUrl" [alt]="currentUser.userName">
+  </ng-container>
+  <ng-container *ngIf="currentUser.userPhotoUrl ==''">
+    <img [src]="'./assets/image/avtar.jpeg'" [alt]="currentUser.userName">
+  </ng-container>
 </picture>
 <div>
-  <h1><span>Name:</span> Sharuka Nijibum</h1>
-  <h5><span>User Id:</span> dfasdfasdfasdadsf</h5>
-  <h5><span>Email:</span> some@some.some</h5>
+  <h1><span>Name:</span> {{currentUser.userName ? currentUser.userName: 'Unknown'}}</h1>
+  <h5><span>User Id:</span> {{currentUser.userId}}</h5>
+  <h5><span>Email:</span> {{currentUser.userEmail}}</h5>
 </div>

@@ -55,9 +55,9 @@ export class AuthService {
       }
     })
 
-
     this.dataCollection = this.firestore.collection('chat-users');
   }
+
 
   getAuthFromLocal(){
     const token = localStorage.getItem('user')
@@ -118,6 +118,7 @@ export class AuthService {
   }
 
   getChatUsers(){
+    console.log(this.auth.currentUser)
     return this.dataCollection.snapshotChanges().pipe(
       map((actions) => {
         return actions.map((a) => {

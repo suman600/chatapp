@@ -1,6 +1,11 @@
 <div class="current-user">
   <picture class="current-user__pic">
-    <img [src]="user?.photo" [alt]="user?.name">
+    <ng-container *ngIf="user.userPhotoUrl !==''">
+      <img [src]="user.userPhotoUrl" [alt]="user.userName">
+    </ng-container>
+    <ng-container *ngIf="user.userPhotoUrl ==''">
+      <img [src]="'./assets/image/avtar.jpeg'" [alt]="user.userName">
+    </ng-container>
   </picture>
-  <h4 class="current-user__title">{{user?.name}}</h4>
+  <h4 class="current-user__title">{{user.userName ? user?.userName : user.userEmail}}</h4>
 </div>

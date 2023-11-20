@@ -6,4 +6,5 @@ export interface User{
   userEmailVerified:boolean;
   userPhoneVerified:boolean;
   userIsAnonymous:boolean;
+  chats: []
 }

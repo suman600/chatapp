@@ -11,7 +11,9 @@ import {
 import {Router} from '@angular/router';
 import {User} from "../modal/user";
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/compat/firestore";
-import {map} from "rxjs";
+import {map, Observable} from "rxjs";
+import firebase from "firebase/compat";
+import DocumentReference = firebase.firestore.DocumentReference;
 
 @Injectable({
   providedIn: 'root'
@@ -24,11 +26,12 @@ export class AuthService {
     userPhotoUrl:'',
     userEmailVerified:false,
     userPhoneVerified:false,
-    userIsAnonymous:false
+    userIsAnonymous:false,
+    chats: []
   }
-
+  userChats: any = {};
+  chats: any[] = [];
   private dataCollection: AngularFirestoreCollection<any>;
-
 
   constructor(
     private auth:Auth,
@@ -46,6 +49,7 @@ export class AuthService {
         this.userData.userEmailVerified = user.emailVerified || false;
         this.userData.userPhoneVerified = user.userPhoneVerified || false;
         this.userData.userIsAnonymous = user.isAnonymous || false;
+        this.userData.chats = user.chats || [];
         setStorage = {userId: user.uid, ...this.userData}
         localStorage.setItem('user', JSON.stringify(setStorage));
         JSON.parse(localStorage.getItem('user')!);
@@ -54,10 +58,8 @@ export class AuthService {
         JSON.parse(localStorage.getItem('user')!);
       }
     })
-
     this.dataCollection = this.firestore.collection('chat-users');
   }
-
 
   getAuthFromLocal(){
     const token = localStorage.getItem('user')
@@ -118,13 +120,12 @@ export class AuthService {
   }
 
   getChatUsers(){
-    console.log(this.auth.currentUser)
     return this.dataCollection.snapshotChanges().pipe(
       map((actions) => {
         return actions.map((a) => {
           const data = a.payload.doc.data();
-          const id = a.payload.doc.id;
-          return { id, ...data };
+          const userId = a.payload.doc.id;
+          return { userId, ...data };
         });
       })
     );
@@ -132,6 +133,39 @@ export class AuthService {
 
   addChatUser(customId: string, data: any): Promise<void> {
     return this.dataCollection.doc(customId).set(data);
+  }
+
+  getUserById(userId: string): Observable<any> {
+    return this.dataCollection.doc(userId).snapshotChanges().pipe(
+      map((action) => {
+        const data = action.payload.data();
+        const id = action.payload.id;
+        return { id, ...data };
+      })
+    );
+  }
+
+  checkChatExits(userId:string){
+    this.getUserById(userId).subscribe(user=>{
+      user?.chats.forEach((chat: DocumentReference) => {
+        chat.get().then((chatDoc) => {
+          if (chatDoc.exists) {
+            const chatData = chatDoc.data();
+            let user1 = chatData?.['user1'];
+            let user2 = chatData?.['user2'];
+            if(user1 === user.id) {
+              this.userChats[user2] = chat.id;
+            } else if(user2 === user.id) {
+              this.userChats[user1] = chat.id;
+            }
+          } else {
+            console.log('Referenced chat document does not exist.');
+          }
+        }).catch(error => {
+          console.error('Error fetching chat document:', error);
+        });
+      })
+    })
   }
 
 }

@@ -1,6 +1,7 @@
 <input type="text" class="form-control" placeholder="Search"/>
 <app-profile
-  [ngClass]="{'active': $index == 0}"
+  (click)="clickToChat(user, $index)"
+  [ngClass]="{'active': selectedItem == $index}"
   *ngFor="let user of allUsers; index as $index"
   [user]="user">
 </app-profile>

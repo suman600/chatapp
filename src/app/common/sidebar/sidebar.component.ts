@@ -1,5 +1,4 @@
-import {Component, OnInit} from '@angular/core';
-import {User} from "../../modal/user";
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {AuthService} from "../../service/auth.service";
 
 @Component({
@@ -8,7 +7,10 @@ import {AuthService} from "../../service/auth.service";
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit{
-  allUsers:User[] = []
+  allUsers:any = [];
+  selectedItem:number = 0;
+  @Output() chatEventEmitter:EventEmitter<string> = new EventEmitter<string>();
+
   constructor(
     private service:AuthService
   ) {
@@ -16,7 +18,20 @@ export class SidebarComponent implements OnInit{
 
   ngOnInit() {
     this.service.getChatUsers().subscribe((res:any)=>{
-      this.allUsers = res;
+      this.allUserFun(res);
     })
+  }
+
+  allUserFun(param:any):any{
+    param.forEach((item:any)=>{
+      if (item.userId !== this.service.getAuthFromLocal().userId){
+        this.allUsers.push(item);
+      }
+    })
+  }
+
+  clickToChat(param:any, index:number){
+    this.selectedItem = index;
+    this.chatEventEmitter.emit(param.userId);
   }
 }

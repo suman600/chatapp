@@ -25,7 +25,8 @@ export class DashboardComponent implements OnInit{
   }
 
   ngOnInit() {
-    this.auth.checkChatExits(this.auth.getAuthFromLocal().userId);
+    this.auth.initChatData();
+    // this.auth.checkChatExits(this.auth.getAuthFromLocal().userId);
   }
   getUserId(userId:any){
     this.auth.checkChatExits(userId);

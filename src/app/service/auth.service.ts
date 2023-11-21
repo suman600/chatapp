@@ -30,8 +30,9 @@ export class AuthService {
     chats: []
   }
   userChats: any = {};
-  chats: any[] = [];
+  chats: any = {};
   private dataCollection: AngularFirestoreCollection<any>;
+  private chatCollection: AngularFirestoreCollection<any>;
 
   constructor(
     private auth:Auth,
@@ -59,6 +60,7 @@ export class AuthService {
       }
     })
     this.dataCollection = this.firestore.collection('chat-users');
+    this.chatCollection = this.firestore.collection('chats');
   }
 
   getAuthFromLocal(){
@@ -145,8 +147,8 @@ export class AuthService {
     );
   }
 
-  checkChatExits(userId:string){
-    this.getUserById(userId).subscribe(user=>{
+  initChatData() {
+    this.getUserById(this.getAuthFromLocal().userId).subscribe(user=>{
       user?.chats.forEach((chat: DocumentReference) => {
         chat.get().then((chatDoc) => {
           if (chatDoc.exists) {
@@ -158,14 +160,34 @@ export class AuthService {
             } else if(user2 === user.id) {
               this.userChats[user1] = chat.id;
             }
-          } else {
-            console.log('Referenced chat document does not exist.');
+            this.chats[chat.id] = chatData;
           }
         }).catch(error => {
           console.error('Error fetching chat document:', error);
         });
       })
+      setInterval(() => {
+        console.log({chats: this.chats})}, 5000)
     })
+  }
+
+  checkChatExits(userId:string){
+    if(this.userChats[userId]) {
+
+    }else {
+      let newChatData = {
+        messages: [],
+        'user1': this.getAuthFromLocal().userId,
+        'user2': userId
+      };
+      this.chatCollection.add(newChatData);
+      this.dataCollection.doc(userId).update(
+        {
+          'user1': this.getAuthFromLocal().userId,
+          'user2': userId
+        }
+      )
+    }
   }
 
 }

@@ -22,12 +22,13 @@ export class SidebarComponent implements OnInit{
     })
   }
 
-  allUserFun(param:any):any{
-    param.forEach((item:any)=>{
-      if (item.userId !== this.service.getAuthFromLocal().userId){
-        this.allUsers.push(item);
-      }
-    })
+  allUserFun(param: any): any {
+    const authUserId = this.service.getAuthFromLocal().userId;
+    const userIdSet = new Set([authUserId]);
+    userIdSet.add(authUserId);
+    const filteredArray = param.filter((item: any) => !userIdSet.has(item.userId));
+    this.allUsers = [];
+    this.allUsers.push(...filteredArray);
   }
 
   clickToChat(param:any, index:number){

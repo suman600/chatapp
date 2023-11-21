@@ -8,9 +8,13 @@ import {AuthService} from "../../service/auth.service";
 })
 export class SettingComponent {
   showDropdown:boolean = false;
-
+  loggedInUser:any = {};
   constructor(
     private authService:AuthService) {
+    let userId = this.authService.getAuthFromLocal().userId;
+    this.authService.getUserById(userId).subscribe(user=>{
+      this.loggedInUser = user;
+    });
   }
   showSetting(){
     this.showDropdown = !this.showDropdown

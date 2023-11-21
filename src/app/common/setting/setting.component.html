@@ -1,6 +1,11 @@
-<div class="setting">
+<div class="setting" *ngIf="loggedInUser">
   <button class="setting__toggle" (click)="showSetting()">
-    <img src="https://prium.github.io/phoenix/v1.13.0/assets/img/team/15.webp" alt="">
+    <ng-container *ngIf="loggedInUser?.userPhotoUrl !==''">
+      <img [src]="loggedInUser?.userPhotoUrl" [alt]="loggedInUser?.userName || 'user'">
+    </ng-container>
+    <ng-container *ngIf="loggedInUser?.userPhotoUrl ==''">
+      <img src="/assets/image/avtar.jpeg" [alt]="loggedInUser?.userName || 'user'">
+    </ng-container>
   </button>
   <div class="setting__box" *ngIf="showDropdown">
     <div class="setting__item" [routerLink]="['/profile']">Profile</div>

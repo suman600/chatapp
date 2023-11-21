@@ -166,27 +166,32 @@ export class AuthService {
           console.error('Error fetching chat document:', error);
         });
       })
-      setInterval(() => {
-        console.log({chats: this.chats})}, 5000)
     })
   }
 
   checkChatExits(userId:string){
     if(this.userChats[userId]) {
 
-    }else {
+    } else {
       let newChatData = {
         messages: [],
         'user1': this.getAuthFromLocal().userId,
         'user2': userId
       };
-      this.chatCollection.add(newChatData);
-      this.dataCollection.doc(userId).update(
-        {
-          'user1': this.getAuthFromLocal().userId,
-          'user2': userId
-        }
-      )
+      this.chatCollection.add(newChatData)
+      .then((docRef) => {
+        this.userChats[userId] = docRef.id;
+        })
+          .catch((error) => {
+            throw error;
+          });
+        this.dataCollection.doc(userId).update(
+          {
+            'user1': this.getAuthFromLocal().userId,
+            'user2': userId
+          }
+        )
+
     }
   }
 

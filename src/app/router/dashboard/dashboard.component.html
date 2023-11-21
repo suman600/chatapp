@@ -1,4 +1,6 @@
-<app-sidebar (chatEventEmitter)="getUserId($event)"></app-sidebar>
-<app-header></app-header>
+<app-sidebar
+  (chatIDEventEmitter)="getFirstId($event)"
+  (chatEventEmitter)="getUserId($event)"></app-sidebar>
+<app-header [currentUerId]="currentUserId"></app-header>
 <app-main-view></app-main-view>
 <app-footer></app-footer>

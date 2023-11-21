@@ -10,6 +10,7 @@ export class SidebarComponent implements OnInit{
   allUsers:any = [];
   selectedItem:number = 0;
   @Output() chatEventEmitter:EventEmitter<string> = new EventEmitter<string>();
+  @Output() chatIDEventEmitter:EventEmitter<string> = new EventEmitter<string>();
 
   constructor(
     private service:AuthService
@@ -19,6 +20,7 @@ export class SidebarComponent implements OnInit{
   ngOnInit() {
     this.service.getChatUsers().subscribe((res:any)=>{
       this.allUserFun(res);
+      this.chatIDEventEmitter.emit(this.allUsers[0].userId);
     })
   }
 

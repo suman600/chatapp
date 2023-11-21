@@ -10,26 +10,29 @@ import DocumentReference = firebase.firestore.DocumentReference;
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit{
-
   userChats: any = {};
   chats: any[] = [];
-  constructor(private auth: AuthService) {}
+  currentUserId:string='';
+
+  constructor(private auth: AuthService) {
+  }
 
   user = {
     id: '',
     email:'',
     name: '',
    chat: [
-
    ]
   }
 
   ngOnInit() {
     this.auth.initChatData();
-    // this.auth.checkChatExits(this.auth.getAuthFromLocal().userId);
   }
   getUserId(userId:any){
+    this.currentUserId = userId;
     this.auth.checkChatExits(userId);
-    console.log(userId);
+  }
+  getFirstId(userId:any){
+    this.currentUserId  = userId;
   }
 }

@@ -12,7 +12,7 @@ import {Router} from '@angular/router';
 import {User} from "../modal/user";
 import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/compat/firestore";
 import {map, Observable} from "rxjs";
-import firebase from "firebase/compat";
+import firebase from "firebase/compat/app";
 import DocumentReference = firebase.firestore.DocumentReference;
 
 @Injectable({
@@ -141,13 +141,15 @@ export class AuthService {
     return this.dataCollection.doc(userId).snapshotChanges().pipe(
       map((action) => {
         const data = action.payload.data();
-        const id = action.payload.id;
-        return { id, ...data };
+        const userId = action.payload.id;
+        return { userId, ...data };
+
       })
     );
   }
-
-  initChatData() {
+  initChatData()  {
+    debugger
+    console.log(this.userChats);
     this.getUserById(this.getAuthFromLocal().userId).subscribe(user=>{
       user?.chats.forEach((chat: DocumentReference) => {
         chat.get().then((chatDoc) => {
@@ -170,6 +172,8 @@ export class AuthService {
   }
 
   checkChatExits(userId:string){
+    debugger
+    console.log(this.userChats);
     if(this.userChats[userId]) {
 
     } else {
@@ -181,16 +185,22 @@ export class AuthService {
       this.chatCollection.add(newChatData)
       .then((docRef) => {
         this.userChats[userId] = docRef.id;
+        this.dataCollection.doc(this.getAuthFromLocal().userId).update({
+          chats: firebase.firestore.FieldValue.arrayUnion('chats/'+docRef.id)
+        })
+        .then(()=>{
+          console.log('Chat data added successfully!');
+        })
         })
           .catch((error) => {
             throw error;
           });
-        this.dataCollection.doc(userId).update(
-          {
-            'user1': this.getAuthFromLocal().userId,
-            'user2': userId
-          }
-        )
+        // this.dataCollection.doc(userId).update(
+        //   {
+        //     'user1': this.getAuthFromLocal().userId,
+        //     'user2': userId
+        //   }
+        // )
 
     }
   }

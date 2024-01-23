@@ -26,6 +26,7 @@ export class DashboardComponent implements OnInit{
   }
 
   ngOnInit() {
+    debugger
     this.auth.initChatData();
   }
   getUserId(userId:any){
